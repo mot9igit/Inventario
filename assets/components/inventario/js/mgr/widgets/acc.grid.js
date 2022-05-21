@@ -1,7 +1,7 @@
-Inventario.grid.Items = function (config) {
+Inventario.grid.Acc = function (config) {
     config = config || {};
     if (!config.id) {
-        config.id = 'inventario-grid-items';
+        config.id = 'inventario-grid-acc';
     }
     Ext.applyIf(config, {
         url: Inventario.config.connector_url,
@@ -10,7 +10,7 @@ Inventario.grid.Items = function (config) {
         tbar: this.getTopBar(config),
         sm: new Ext.grid.CheckboxSelectionModel(),
         baseParams: {
-            action: 'mgr/item/getlist'
+            action: 'mgr/group_accept/getlist'
         },
         listeners: {
             rowDblClick: function (grid, rowIndex, e) {
@@ -34,7 +34,7 @@ Inventario.grid.Items = function (config) {
         remoteSort: true,
         autoHeight: true,
     });
-    Inventario.grid.Items.superclass.constructor.call(this, config);
+    Inventario.grid.Acc.superclass.constructor.call(this, config);
 
     // Clear selection on grid refresh
     this.store.on('load', function () {
@@ -43,7 +43,7 @@ Inventario.grid.Items = function (config) {
         }
     }, this);
 };
-Ext.extend(Inventario.grid.Items, MODx.grid.Grid, {
+Ext.extend(Inventario.grid.Acc, MODx.grid.Grid, {
     windows: {},
 
     getMenu: function (grid, rowIndex) {
@@ -57,7 +57,7 @@ Ext.extend(Inventario.grid.Items, MODx.grid.Grid, {
 
     createItem: function (btn, e) {
         var w = MODx.load({
-            xtype: 'inventario-item-window-create',
+            xtype: 'inventario-acc-window-create',
             id: Ext.id(),
             listeners: {
                 success: {
@@ -68,7 +68,7 @@ Ext.extend(Inventario.grid.Items, MODx.grid.Grid, {
             }
         });
         w.reset();
-        w.setValues({active: true});
+        //w.setValues({active: true});
         w.show(e.target);
     },
 
@@ -84,14 +84,14 @@ Ext.extend(Inventario.grid.Items, MODx.grid.Grid, {
         MODx.Ajax.request({
             url: this.config.url,
             params: {
-                action: 'mgr/item/get',
+                action: 'mgr/group_accept/get',
                 id: id
             },
             listeners: {
                 success: {
                     fn: function (r) {
                         var w = MODx.load({
-                            xtype: 'inventario-item-window-update',
+                            xtype: 'inventario-acc-window-update',
                             id: Ext.id(),
                             record: r,
                             listeners: {
@@ -118,14 +118,14 @@ Ext.extend(Inventario.grid.Items, MODx.grid.Grid, {
         }
         MODx.msg.confirm({
             title: ids.length > 1
-                ? _('inventario_items_remove')
-                : _('inventario_item_remove'),
+                ? _('inventario_accs_remove')
+                : _('inventario_acc_remove'),
             text: ids.length > 1
-                ? _('inventario_items_remove_confirm')
-                : _('inventario_item_remove_confirm'),
+                ? _('inventario_accs_remove_confirm')
+                : _('inventario_acc_remove_confirm'),
             url: this.config.url,
             params: {
-                action: 'mgr/item/remove',
+                action: 'mgr/group_accept/remove',
                 ids: Ext.util.JSON.encode(ids),
             },
             listeners: {
@@ -139,50 +139,8 @@ Ext.extend(Inventario.grid.Items, MODx.grid.Grid, {
         return true;
     },
 
-    disableItem: function () {
-        var ids = this._getSelectedIds();
-        if (!ids.length) {
-            return false;
-        }
-        MODx.Ajax.request({
-            url: this.config.url,
-            params: {
-                action: 'mgr/item/disable',
-                ids: Ext.util.JSON.encode(ids),
-            },
-            listeners: {
-                success: {
-                    fn: function () {
-                        this.refresh();
-                    }, scope: this
-                }
-            }
-        })
-    },
-
-    enableItem: function () {
-        var ids = this._getSelectedIds();
-        if (!ids.length) {
-            return false;
-        }
-        MODx.Ajax.request({
-            url: this.config.url,
-            params: {
-                action: 'mgr/item/enable',
-                ids: Ext.util.JSON.encode(ids),
-            },
-            listeners: {
-                success: {
-                    fn: function () {
-                        this.refresh();
-                    }, scope: this
-                }
-            }
-        })
-    },
-
     getFields: function () {
-        return ['id', 'name', 'description', 'active', 'actions'];
+        return ['id', 'group_name', 'group', 'description', 'usergroup_name', 'user_group', 'actions'];
     },
 
     getColumns: function () {
@@ -192,21 +150,15 @@ Ext.extend(Inventario.grid.Items, MODx.grid.Grid, {
             sortable: true,
             width: 70
         }, {
-            header: _('inventario_name'),
-            dataIndex: 'name',
+            header: _('inventario_group'),
+            dataIndex: 'group_name',
             sortable: true,
             width: 200,
         }, {
-            header: _('inventario_description'),
-            dataIndex: 'description',
+            header: _('inventario_user_group'),
+            dataIndex: 'usergroup_name',
             sortable: false,
             width: 250,
-        }, {
-            header: _('inventario_active'),
-            dataIndex: 'active',
-            renderer: Inventario.utils.renderBoolean,
-            sortable: true,
-            width: 100,
         }, {
             header: _('inventario_actions'),
             dataIndex: 'actions',
@@ -219,7 +171,7 @@ Ext.extend(Inventario.grid.Items, MODx.grid.Grid, {
 
     getTopBar: function () {
         return [{
-            text: '<i class="icon icon-plus"></i>&nbsp;' + _('inventario_item_create'),
+            text: '<i class="icon icon-plus"></i>&nbsp;' + _('inventario_acc_create'),
             handler: this.createItem,
             scope: this
         }, '->', {
@@ -284,4 +236,4 @@ Ext.extend(Inventario.grid.Items, MODx.grid.Grid, {
         this.getBottomToolbar().changePage(1);
     },
 });
-Ext.reg('inventario-grid-items', Inventario.grid.Items);
+Ext.reg('inventario-grid-acc', Inventario.grid.Acc);

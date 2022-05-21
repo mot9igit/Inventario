@@ -1,28 +1,28 @@
 <?php
 
-class InventarioGroupUpdateProcessor extends modObjectUpdateProcessor
+class InventarioClientsUpdateProcessor extends modObjectUpdateProcessor
 {
-    public $objectType = 'InventarioGroups';
-    public $classKey = 'InventarioGroups';
+    public $objectType = 'InventarioClients';
+    public $classKey = 'InventarioClients';
     public $languageTopics = ['inventario'];
     //public $permission = 'save';
 
 
-	/**
-	 * We doing special check of permission
-	 * because of our objects is not an instances of modAccessibleObject
-	 *
-	 * @return bool|string
-	 */
-	public function beforeSave()
-	{
-		if (!$this->checkPermissions()) {
-			return $this->modx->lexicon('access_denied');
-		}
+    /**
+     * We doing special check of permission
+     * because of our objects is not an instances of modAccessibleObject
+     *
+     * @return bool|string
+     */
+    public function beforeSave()
+    {
+        if (!$this->checkPermissions()) {
+            return $this->modx->lexicon('access_denied');
+        }
 		$this->object->set('editedby', $this->modx->user->get('id'));
 		$this->object->set('editedon', time(), 'integer');
 		return parent::beforeSave();
-	}
+    }
 
 
     /**
@@ -33,7 +33,7 @@ class InventarioGroupUpdateProcessor extends modObjectUpdateProcessor
         $id = (int)$this->getProperty('id');
         $name = trim($this->getProperty('name'));
         if (empty($id)) {
-            return $this->modx->lexicon('inventario_group_err_ns');
+            return $this->modx->lexicon('inventario_client_err_ns');
         }
 
         if (empty($name)) {
@@ -46,4 +46,4 @@ class InventarioGroupUpdateProcessor extends modObjectUpdateProcessor
     }
 }
 
-return 'InventarioGroupUpdateProcessor';
+return 'InventarioClientsUpdateProcessor';

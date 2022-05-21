@@ -1,9 +1,9 @@
 <?php
 
-class InventarioGroupDisableProcessor extends modObjectProcessor
+class InventarioClientsEnableProcessor extends modObjectProcessor
 {
-    public $objectType = 'InventarioGroups';
-    public $classKey = 'InventarioGroups';
+    public $objectType = 'InventarioClients';
+    public $classKey = 'InventarioClients';
     public $languageTopics = ['inventario'];
     //public $permission = 'save';
 
@@ -19,16 +19,16 @@ class InventarioGroupDisableProcessor extends modObjectProcessor
 
         $ids = $this->modx->fromJSON($this->getProperty('ids'));
         if (empty($ids)) {
-            return $this->failure($this->modx->lexicon('inventario_group_err_ns'));
+            return $this->failure($this->modx->lexicon('inventario_client_err_ns'));
         }
 
         foreach ($ids as $id) {
             /** @var InventarioItem $object */
             if (!$object = $this->modx->getObject($this->classKey, $id)) {
-                return $this->failure($this->modx->lexicon('inventario_group_err_nf'));
+                return $this->failure($this->modx->lexicon('inventario_client_err_nf'));
             }
 
-            $object->set('active', false);
+            $object->set('active', true);
 			$object->set('editedby', $this->modx->user->get('id'));
 			$object->set('editedon', time(), 'integer');
             $object->save();
@@ -39,4 +39,4 @@ class InventarioGroupDisableProcessor extends modObjectProcessor
 
 }
 
-return 'InventarioGroupDisableProcessor';
+return 'InventarioClientsEnableProcessor';

@@ -8,20 +8,21 @@ class InventarioItemUpdateProcessor extends modObjectUpdateProcessor
     //public $permission = 'save';
 
 
-    /**
-     * We doing special check of permission
-     * because of our objects is not an instances of modAccessibleObject
-     *
-     * @return bool|string
-     */
-    public function beforeSave()
-    {
-        if (!$this->checkPermissions()) {
-            return $this->modx->lexicon('access_denied');
-        }
-
-        return true;
-    }
+	/**
+	 * We doing special check of permission
+	 * because of our objects is not an instances of modAccessibleObject
+	 *
+	 * @return bool|string
+	 */
+	public function beforeSave()
+	{
+		if (!$this->checkPermissions()) {
+			return $this->modx->lexicon('access_denied');
+		}
+		$this->object->set('editedby', $this->modx->user->get('id'));
+		$this->object->set('editedon', time(), 'integer');
+		return parent::beforeSave();
+	}
 
 
     /**

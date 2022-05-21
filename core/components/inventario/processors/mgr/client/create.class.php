@@ -1,9 +1,9 @@
 <?php
 
-class InventarioItemCreateProcessor extends modObjectCreateProcessor
+class InventarioClientsCreateProcessor extends modObjectCreateProcessor
 {
-    public $objectType = 'InventarioItems';
-    public $classKey = 'InventarioItems';
+    public $objectType = 'InventarioClients';
+    public $classKey = 'InventarioClients';
     public $languageTopics = ['inventario'];
     //public $permission = 'create';
 
@@ -15,9 +15,9 @@ class InventarioItemCreateProcessor extends modObjectCreateProcessor
     {
         $name = trim($this->getProperty('name'));
         if (empty($name)) {
-            $this->modx->error->addField('name', $this->modx->lexicon('inventario_item_err_name'));
+            $this->modx->error->addField('name', $this->modx->lexicon('inventario_group_err_name'));
         } elseif ($this->modx->getCount($this->classKey, ['name' => $name])) {
-            $this->modx->error->addField('name', $this->modx->lexicon('inventario_item_err_ae'));
+            $this->modx->error->addField('name', $this->modx->lexicon('inventario_group_err_ae'));
         }
 
 		$scriptProperties = $this->getProperties();
@@ -30,10 +30,9 @@ class InventarioItemCreateProcessor extends modObjectCreateProcessor
 		}
 
 		$this->setProperties($scriptProperties);
-
         return parent::beforeSet();
     }
 
 }
 
-return 'InventarioItemCreateProcessor';
+return 'InventarioClientsCreateProcessor';

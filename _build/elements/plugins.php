@@ -1,11 +1,11 @@
 <?php
 
 return [
-    'Inventario' => [
+    'inventario' => [
         'file' => 'inventario',
         'description' => '',
         'events' => [
-            'OnManagerPageInit' => [],
+            'OnLoadWebDocument' => [],
         ],
     ],
 ];

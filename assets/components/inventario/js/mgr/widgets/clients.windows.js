@@ -1,14 +1,14 @@
-Inventario.window.CreateItem = function (config) {
+Inventario.window.CreateClient = function (config) {
     config = config || {};
     if (!config.id) {
-        config.id = 'inventario-item-window-create';
+        config.id = 'inventario-clients-window-create';
     }
     Ext.applyIf(config, {
-        title: _('inventario_item_create'),
+        title: _('inventario_client_create'),
         width: 550,
         autoHeight: true,
         url: Inventario.config.connector_url,
-        action: 'mgr/item/create',
+        action: 'mgr/client/create',
         fields: this.getFields(config),
         keys: [{
             key: Ext.EventObject.ENTER, shift: true, fn: function () {
@@ -16,31 +16,25 @@ Inventario.window.CreateItem = function (config) {
             }, scope: this
         }]
     });
-    Inventario.window.CreateItem.superclass.constructor.call(this, config);
+    Inventario.window.CreateClient.superclass.constructor.call(this, config);
 };
-Ext.extend(Inventario.window.CreateItem, MODx.Window, {
+Ext.extend(Inventario.window.CreateClient, MODx.Window, {
 
     getFields: function (config) {
         return [{
             xtype: 'textfield',
-            fieldLabel: _('inventario_name'),
+            fieldLabel: _('inventario_client_name'),
             name: 'name',
             id: config.id + '-name',
             anchor: '99%',
             allowBlank: false,
-        },{
-            xtype: 'textfield',
-            fieldLabel: _('inventario_number'),
-            name: 'number',
-            id: config.id + '-number',
+        }, {
+            xtype: 'xdatetime',
+            fieldLabel: _('inventario_birthday'),
+            name: 'birthday',
+            id: config.id + '-birthday',
             anchor: '99%',
-            allowBlank: false,
-        },{
-            xtype: 'numberfield',
-            fieldLabel: _('inventario_count'),
-            name: 'count',
-            id: config.id + '-count',
-            anchor: '99%'
+            allowBlank: true,
         }, {
             xtype: 'modx-combo-browser',
             fieldLabel: _('inventario_photo'),
@@ -48,12 +42,23 @@ Ext.extend(Inventario.window.CreateItem, MODx.Window, {
             id: config.id + '-photo',
             anchor: '99%'
         }, {
-            xtype: 'inventario-combo-groups',
-            fieldLabel: _('inventario_group'),
-            name: 'group',
-            id: config.id + '-group',
-            anchor: '99%',
-            allowBlank: false,
+            xtype: 'textfield',
+            fieldLabel: _('inventario_contact'),
+            name: 'contact',
+            id: config.id + '-contact',
+            anchor: '99%'
+        }, {
+            xtype: 'textfield',
+            fieldLabel: _('inventario_email'),
+            name: 'email',
+            id: config.id + '-email',
+            anchor: '99%'
+        }, {
+            xtype: 'textfield',
+            fieldLabel: _('inventario_phone'),
+            name: 'phone',
+            id: config.id + '-phone',
+            anchor: '99%'
         }, {
             xtype: 'textarea',
             fieldLabel: _('inventario_description'),
@@ -74,20 +79,20 @@ Ext.extend(Inventario.window.CreateItem, MODx.Window, {
     }
 
 });
-Ext.reg('inventario-item-window-create', Inventario.window.CreateItem);
+Ext.reg('inventario-clients-window-create', Inventario.window.CreateClient);
 
 
-Inventario.window.UpdateItem = function (config) {
+Inventario.window.UpdateClient = function (config) {
     config = config || {};
     if (!config.id) {
-        config.id = 'inventario-item-window-update';
+        config.id = 'inventario-clients-window-update';
     }
     Ext.applyIf(config, {
-        title: _('inventario_item_update'),
+        title: _('inventario_client_update'),
         width: 550,
         autoHeight: true,
         url: Inventario.config.connector_url,
-        action: 'mgr/item/update',
+        action: 'mgr/client/update',
         fields: this.getFields(config),
         keys: [{
             key: Ext.EventObject.ENTER, shift: true, fn: function () {
@@ -95,9 +100,9 @@ Inventario.window.UpdateItem = function (config) {
             }, scope: this
         }]
     });
-    Inventario.window.UpdateItem.superclass.constructor.call(this, config);
+    Inventario.window.UpdateClient.superclass.constructor.call(this, config);
 };
-Ext.extend(Inventario.window.UpdateItem, MODx.Window, {
+Ext.extend(Inventario.window.UpdateClient, MODx.Window, {
 
     getFields: function (config) {
         return [{
@@ -106,24 +111,18 @@ Ext.extend(Inventario.window.UpdateItem, MODx.Window, {
             id: config.id + '-id',
         }, {
             xtype: 'textfield',
-            fieldLabel: _('inventario_name'),
+            fieldLabel: _('inventario_client_name'),
             name: 'name',
             id: config.id + '-name',
             anchor: '99%',
             allowBlank: false,
-        },{
-            xtype: 'textfield',
-            fieldLabel: _('inventario_number'),
-            name: 'number',
-            id: config.id + '-number',
+        }, {
+            xtype: 'xdatetime',
+            fieldLabel: _('inventario_birthday'),
+            name: 'birthday',
+            id: config.id + '-birthday',
             anchor: '99%',
-            allowBlank: false,
-        },{
-            xtype: 'numberfield',
-            fieldLabel: _('inventario_count'),
-            name: 'count',
-            id: config.id + '-count',
-            anchor: '99%'
+            allowBlank: true,
         }, {
             xtype: 'modx-combo-browser',
             fieldLabel: _('inventario_photo'),
@@ -131,12 +130,23 @@ Ext.extend(Inventario.window.UpdateItem, MODx.Window, {
             id: config.id + '-photo',
             anchor: '99%'
         }, {
-            xtype: 'inventario-combo-groups',
-            fieldLabel: _('inventario_group'),
-            name: 'group',
-            id: config.id + '-group',
-            anchor: '99%',
-            allowBlank: false,
+            xtype: 'textfield',
+            fieldLabel: _('inventario_contact'),
+            name: 'contact',
+            id: config.id + '-contact',
+            anchor: '99%'
+        }, {
+            xtype: 'textfield',
+            fieldLabel: _('inventario_email'),
+            name: 'email',
+            id: config.id + '-email',
+            anchor: '99%'
+        }, {
+            xtype: 'textfield',
+            fieldLabel: _('inventario_phone'),
+            name: 'phone',
+            id: config.id + '-phone',
+            anchor: '99%'
         }, {
             xtype: 'textarea',
             fieldLabel: _('inventario_description'),
@@ -156,4 +166,4 @@ Ext.extend(Inventario.window.UpdateItem, MODx.Window, {
     }
 
 });
-Ext.reg('inventario-item-window-update', Inventario.window.UpdateItem);
+Ext.reg('inventario-clients-window-update', Inventario.window.UpdateClient);

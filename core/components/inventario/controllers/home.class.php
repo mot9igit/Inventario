@@ -15,7 +15,8 @@ class InventarioHomeManagerController extends modExtraManagerController
      */
     public function initialize()
     {
-        $this->Inventario = $this->modx->getService('Inventario', 'Inventario', MODX_CORE_PATH . 'components/inventario/model/');
+		$corePath = $this->modx->getOption('inventario_core_path', array(), $this->modx->getOption('core_path') . 'components/inventario/');
+        $this->Inventario = $this->modx->getService('Inventario', 'Inventario', $corePath . 'model/');
         parent::initialize();
     }
 
@@ -56,6 +57,12 @@ class InventarioHomeManagerController extends modExtraManagerController
         $this->addJavascript($this->Inventario->config['jsUrl'] . 'mgr/inventario.js');
         $this->addJavascript($this->Inventario->config['jsUrl'] . 'mgr/misc/utils.js');
         $this->addJavascript($this->Inventario->config['jsUrl'] . 'mgr/misc/combo.js');
+		$this->addJavascript($this->Inventario->config['jsUrl'] . 'mgr/widgets/acc.grid.js');
+		$this->addJavascript($this->Inventario->config['jsUrl'] . 'mgr/widgets/acc.windows.js');
+		$this->addJavascript($this->Inventario->config['jsUrl'] . 'mgr/widgets/clients.grid.js');
+		$this->addJavascript($this->Inventario->config['jsUrl'] . 'mgr/widgets/clients.windows.js');
+		$this->addJavascript($this->Inventario->config['jsUrl'] . 'mgr/widgets/groups.grid.js');
+		$this->addJavascript($this->Inventario->config['jsUrl'] . 'mgr/widgets/groups.windows.js');
         $this->addJavascript($this->Inventario->config['jsUrl'] . 'mgr/widgets/items.grid.js');
         $this->addJavascript($this->Inventario->config['jsUrl'] . 'mgr/widgets/items.windows.js');
         $this->addJavascript($this->Inventario->config['jsUrl'] . 'mgr/widgets/home.panel.js');
@@ -75,7 +82,6 @@ class InventarioHomeManagerController extends modExtraManagerController
     public function getTemplateFile()
     {
         $this->content .= '<div id="inventario-panel-home-div"></div>';
-
         return '';
     }
 }

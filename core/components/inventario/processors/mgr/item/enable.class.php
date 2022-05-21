@@ -29,6 +29,8 @@ class InventarioItemEnableProcessor extends modObjectProcessor
             }
 
             $object->set('active', true);
+			$object->set('editedby', $this->modx->user->get('id'));
+			$object->set('editedon', time(), 'integer');
             $object->save();
         }
 

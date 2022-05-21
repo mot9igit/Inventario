@@ -20,6 +20,17 @@ class InventarioGroupCreateProcessor extends modObjectCreateProcessor
             $this->modx->error->addField('name', $this->modx->lexicon('inventario_group_err_ae'));
         }
 
+		$scriptProperties = $this->getProperties();
+		if(empty($scriptProperties['createdon'])){
+			$scriptProperties['createdon'] = strftime('%Y-%m-%d %H:%M:%S');
+		}
+
+		if(empty($scriptProperties['createdby'])){
+			$scriptProperties['createdby'] = $this->modx->user->get('id');
+		}
+
+		$this->setProperties($scriptProperties);
+
         return parent::beforeSet();
     }
 

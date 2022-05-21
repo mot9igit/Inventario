@@ -20,6 +20,16 @@ Inventario.panel.Home = function (config) {
             border: true,
             hideMode: 'offsets',
             items: [{
+                title: _('inventario_groups'),
+                layout: 'anchor',
+                items: [{
+                    html: _('inventario_groups_intro_msg'),
+                    cls: 'panel-desc',
+                }, {
+                    xtype: 'inventario-grid-groups',
+                    cls: 'main-wrapper',
+                }]
+            },{
                 title: _('inventario_items'),
                 layout: 'anchor',
                 items: [{
@@ -27,6 +37,26 @@ Inventario.panel.Home = function (config) {
                     cls: 'panel-desc',
                 }, {
                     xtype: 'inventario-grid-items',
+                    cls: 'main-wrapper',
+                }]
+            },{
+                title: _('inventario_acc'),
+                layout: 'anchor',
+                items: [{
+                    html: _('inventario_acc_intro_msg'),
+                    cls: 'panel-desc',
+                }, {
+                    xtype: 'inventario-grid-acc',
+                    cls: 'main-wrapper',
+                }]
+            },{
+                title: _('inventario_clients'),
+                layout: 'anchor',
+                items: [{
+                    html: _('inventario_clients_intro_msg'),
+                    cls: 'panel-desc',
+                }, {
+                    xtype: 'inventario-grid-clients',
                     cls: 'main-wrapper',
                 }]
             }]

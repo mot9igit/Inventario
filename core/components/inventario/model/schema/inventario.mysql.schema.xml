@@ -2,11 +2,18 @@
 <model package="inventario" baseClass="xPDOObject" platform="mysql" defaultEngine="InnoDB" phpdoc-package="inventario"
        version="1.1">
 
-    <object class="InventarioGroups" table="inventario_groups" extends="xPDOSimpleObject">
+    <object class="InventarioClients" table="inventario_clients" extends="xPDOSimpleObject">
         <field key="name" dbtype="varchar" precision="100" phptype="string" null="false" default=""/>
+        <field key="birthday" dbtype="datetime" phptype="datetime" null="true" />
+        <field key="photo" dbtype="text" phptype="string" null="true" default=""/>
+        <field key="contact" dbtype="varchar" precision="255" phptype="string" null="false" default=""/>
+        <field key="email" dbtype="varchar" precision="100" phptype="string" null="false" default=""/>
+        <field key="phone" dbtype="varchar" precision="100" phptype="string" null="false" default=""/>
         <field key="description" dbtype="text" phptype="string" null="true" default=""/>
         <field key="createdon" dbtype="datetime" phptype="datetime" null="true" />
+        <field key="createdby" dbtype="int" precision="10" phptype="integer" null="false" default="0" />
         <field key="editedon" dbtype="datetime" phptype="datetime" null="true" />
+        <field key="editedby" dbtype="int" precision="10" phptype="integer" null="false" default="0" />
         <field key="active" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="1"/>
         <field key="properties" dbtype="text" phptype="json" null="true"/>
 
@@ -16,14 +23,40 @@
         <index alias="active" name="active" primary="false" unique="false" type="BTREE">
             <column key="active" length="" collation="A" null="false"/>
         </index>
+
+        <aggregate alias="CreatedBy" class="modUser" local="createdby" foreign="id" cardinality="one" owner="foreign" />
+        <aggregate alias="EditedBy" class="modUser" local="editedby" foreign="id" cardinality="one" owner="foreign" />
     </object>
 
-    <object class="InventarioGroupsAccepted" table="inventario_groups" extends="xPDOSimpleObject">
+    <object class="InventarioGroups" table="inventario_groups" extends="xPDOSimpleObject">
+        <field key="name" dbtype="varchar" precision="100" phptype="string" null="false" default=""/>
+        <field key="description" dbtype="text" phptype="string" null="true" default=""/>
+        <field key="createdon" dbtype="datetime" phptype="datetime" null="true" />
+        <field key="createdby" dbtype="int" precision="10" phptype="integer" null="false" default="0" />
+        <field key="editedon" dbtype="datetime" phptype="datetime" null="true" />
+        <field key="editedby" dbtype="int" precision="10" phptype="integer" null="false" default="0" />
+        <field key="active" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="1"/>
+        <field key="properties" dbtype="text" phptype="json" null="true"/>
+
+        <index alias="name" name="name" primary="false" unique="false" type="BTREE">
+            <column key="name" length="" collation="A" null="false"/>
+        </index>
+        <index alias="active" name="active" primary="false" unique="false" type="BTREE">
+            <column key="active" length="" collation="A" null="false"/>
+        </index>
+
+        <aggregate alias="CreatedBy" class="modUser" local="createdby" foreign="id" cardinality="one" owner="foreign" />
+        <aggregate alias="EditedBy" class="modUser" local="editedby" foreign="id" cardinality="one" owner="foreign" />
+    </object>
+
+    <object class="InventarioGroupsAccepted" table="inventario_groups_accepted" extends="xPDOSimpleObject">
         <field key="group" dbtype="int" precision="10" phptype="integer" null="false" default=""/>
         <field key="user_group" dbtype="int" precision="10" phptype="integer" null="false" default=""/>
         <field key="description" dbtype="text" phptype="string" null="true" default=""/>
         <field key="createdon" dbtype="datetime" phptype="datetime" null="true" />
+        <field key="createdby" dbtype="int" precision="10" phptype="integer" null="false" default="0" />
         <field key="editedon" dbtype="datetime" phptype="datetime" null="true" />
+        <field key="editedby" dbtype="int" precision="10" phptype="integer" null="false" default="0" />
         <field key="properties" dbtype="text" phptype="json" null="true"/>
 
         <index alias="group" name="group" primary="false" unique="false" type="BTREE">
@@ -35,6 +68,8 @@
 
         <aggregate alias="Group" class="InventarioGroups" local="group" foreign="id" cardinality="one" owner="foreign"/>
         <aggregate alias="UserGroup" class="modUserGroup" local="user_group" foreign="id" cardinality="one" owner="foreign"/>
+        <aggregate alias="CreatedBy" class="modUser" local="createdby" foreign="id" cardinality="one" owner="foreign" />
+        <aggregate alias="EditedBy" class="modUser" local="editedby" foreign="id" cardinality="one" owner="foreign" />
     </object>
 
     <object class="InventarioItems" table="inventario_items" extends="xPDOSimpleObject">
@@ -45,7 +80,9 @@
         <field key="description" dbtype="text" phptype="string" null="true" default=""/>
         <field key="group" dbtype="int" precision="10" phptype="integer" null="false" default=""/>
         <field key="createdon" dbtype="datetime" phptype="datetime" null="true" />
+        <field key="createdby" dbtype="int" precision="10" phptype="integer" null="false" default="0" />
         <field key="editedon" dbtype="datetime" phptype="datetime" null="true" />
+        <field key="editedby" dbtype="int" precision="10" phptype="integer" null="false" default="0" />
         <field key="active" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="1"/>
         <field key="properties" dbtype="text" phptype="json" null="true"/>
 
@@ -61,7 +98,10 @@
         <index alias="active" name="active" primary="false" unique="false" type="BTREE">
             <column key="active" length="" collation="A" null="false"/>
         </index>
+
         <aggregate alias="Group" class="InventarioGroups" local="group" foreign="id" cardinality="one" owner="foreign"/>
+        <aggregate alias="CreatedBy" class="modUser" local="createdby" foreign="id" cardinality="one" owner="foreign" />
+        <aggregate alias="EditedBy" class="modUser" local="editedby" foreign="id" cardinality="one" owner="foreign" />
     </object>
 
 </model>

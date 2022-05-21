@@ -1,29 +1,40 @@
-Inventario.grid.Items = function (config) {
+Inventario.grid.Groups = function (config) {
     config = config || {};
     if (!config.id) {
-        config.id = 'inventario-grid-items';
+        config.id = 'inventario-grid-groups';
     }
     Ext.applyIf(config, {
         url: Inventario.config.connector_url,
+        fields: this.getFields(config),
+        columns: this.getColumns(config),
+        tbar: this.getTopBar(config),
+        sm: new Ext.grid.CheckboxSelectionModel(),
         baseParams: {
-            action: 'inventario/processor',
-            method: 'item/getlist',
+            action: 'mgr/group/getlist'
         },
-        multi_select: true,
+        listeners: {
+            rowDblClick: function (grid, rowIndex, e) {
+                var row = grid.store.getAt(rowIndex);
+                this.updateItem(grid, e, row);
+            }
+        },
         viewConfig: {
             forceFit: true,
             enableRowBody: true,
             autoFill: true,
             showPreview: true,
             scrollOffset: 0,
-            getRowClass: function (rec, ri, p) {
+            getRowClass: function (rec) {
                 return !rec.data.active
-                    ? 'office-grid-row-disabled'
+                    ? 'inventario-grid-row-disabled'
                     : '';
             }
         },
+        paging: true,
+        remoteSort: true,
+        autoHeight: true,
     });
-    Inventario.grid.Items.superclass.constructor.call(this, config);
+    Inventario.grid.Groups.superclass.constructor.call(this, config);
 
     // Clear selection on grid refresh
     this.store.on('load', function () {
@@ -32,12 +43,21 @@ Inventario.grid.Items = function (config) {
         }
     }, this);
 };
-Ext.extend(Inventario.grid.Items, OfficeExt.grid.Default, {
+Ext.extend(Inventario.grid.Groups, MODx.grid.Grid, {
     windows: {},
+
+    getMenu: function (grid, rowIndex) {
+        var ids = this._getSelectedIds();
+
+        var row = grid.getStore().getAt(rowIndex);
+        var menu = Inventario.utils.getMenu(row.data['actions'], this, ids);
+
+        this.addContextMenuItem(menu);
+    },
 
     createItem: function (btn, e) {
         var w = MODx.load({
-            xtype: 'inventario-item-window-create',
+            xtype: 'inventario-group-window-create',
             id: Ext.id(),
             listeners: {
                 success: {
@@ -64,15 +84,14 @@ Ext.extend(Inventario.grid.Items, OfficeExt.grid.Default, {
         MODx.Ajax.request({
             url: this.config.url,
             params: {
-                action: 'inventario/processor',
-                method: 'item/get',
-                id: id,
+                action: 'mgr/group/get',
+                id: id
             },
             listeners: {
                 success: {
                     fn: function (r) {
                         var w = MODx.load({
-                            xtype: 'inventario-item-window-update',
+                            xtype: 'inventario-group-window-update',
                             id: Ext.id(),
                             record: r,
                             listeners: {
@@ -92,27 +111,26 @@ Ext.extend(Inventario.grid.Items, OfficeExt.grid.Default, {
         });
     },
 
-    removeItem: function (act, btn, e) {
+    removeItem: function () {
         var ids = this._getSelectedIds();
         if (!ids.length) {
             return false;
         }
         MODx.msg.confirm({
             title: ids.length > 1
-                ? _('inventario_items_remove')
-                : _('inventario_item_remove'),
+                ? _('inventario_groups_remove')
+                : _('inventario_group_remove'),
             text: ids.length > 1
-                ? _('inventario_items_remove_confirm')
-                : _('inventario_item_remove_confirm'),
+                ? _('inventario_groups_remove_confirm')
+                : _('inventario_group_remove_confirm'),
             url: this.config.url,
             params: {
-                action: 'inventario/processor',
-                method: 'item/remove',
+                action: 'mgr/group/remove',
                 ids: Ext.util.JSON.encode(ids),
             },
             listeners: {
                 success: {
-                    fn: function (r) {
+                    fn: function () {
                         this.refresh();
                     }, scope: this
                 }
@@ -121,7 +139,7 @@ Ext.extend(Inventario.grid.Items, OfficeExt.grid.Default, {
         return true;
     },
 
-    disableItem: function (act, btn, e) {
+    disableItem: function () {
         var ids = this._getSelectedIds();
         if (!ids.length) {
             return false;
@@ -129,8 +147,7 @@ Ext.extend(Inventario.grid.Items, OfficeExt.grid.Default, {
         MODx.Ajax.request({
             url: this.config.url,
             params: {
-                action: 'inventario/processor',
-                method: 'item/disable',
+                action: 'mgr/group/disable',
                 ids: Ext.util.JSON.encode(ids),
             },
             listeners: {
@@ -143,7 +160,7 @@ Ext.extend(Inventario.grid.Items, OfficeExt.grid.Default, {
         })
     },
 
-    enableItem: function (act, btn, e) {
+    enableItem: function () {
         var ids = this._getSelectedIds();
         if (!ids.length) {
             return false;
@@ -151,8 +168,7 @@ Ext.extend(Inventario.grid.Items, OfficeExt.grid.Default, {
         MODx.Ajax.request({
             url: this.config.url,
             params: {
-                action: 'inventario/processor',
-                method: 'item/enable',
+                action: 'mgr/group/enable',
                 ids: Ext.util.JSON.encode(ids),
             },
             listeners: {
@@ -165,58 +181,107 @@ Ext.extend(Inventario.grid.Items, OfficeExt.grid.Default, {
         })
     },
 
-    getFields: function (config) {
+    getFields: function () {
         return ['id', 'name', 'description', 'active', 'actions'];
     },
 
-    getColumns: function (config) {
+    getColumns: function () {
         return [{
-            header: _('inventario_item_id'),
+            header: _('inventario_id'),
             dataIndex: 'id',
             sortable: true,
             width: 70
         }, {
-            header: _('inventario_item_name'),
+            header: _('inventario_name'),
             dataIndex: 'name',
             sortable: true,
             width: 200,
         }, {
-            header: _('inventario_item_description'),
+            header: _('inventario_description'),
             dataIndex: 'description',
             sortable: false,
             width: 250,
         }, {
-            header: _('inventario_item_active'),
+            header: _('inventario_active'),
             dataIndex: 'active',
-            renderer: OfficeExt.utils.renderBoolean,
+            renderer: Inventario.utils.renderBoolean,
             sortable: true,
             width: 100,
         }, {
-            header: _('inventario_grid_actions'),
+            header: _('inventario_actions'),
             dataIndex: 'actions',
-            renderer: OfficeExt.utils.renderActions,
+            renderer: Inventario.utils.renderActions,
             sortable: false,
             width: 100,
             id: 'actions'
         }];
     },
 
-    getTopBar: function (config) {
+    getTopBar: function () {
         return [{
-            text: '<i class="fa fa-plus"></i>&nbsp;' + _('inventario_item_create'),
+            text: '<i class="icon icon-plus"></i>&nbsp;' + _('inventario_group_create'),
             handler: this.createItem,
             scope: this
-        }, '->', this.getSearchField()];
-    },
-
-    getListeners: function () {
-        return {
-            rowDblClick: function (grid, rowIndex, e) {
-                var row = grid.store.getAt(rowIndex);
-                this.updateItem(grid, e, row);
+        }, '->', {
+            xtype: 'inventario-field-search',
+            width: 250,
+            listeners: {
+                search: {
+                    fn: function (field) {
+                        this._doSearch(field);
+                    }, scope: this
+                },
+                clear: {
+                    fn: function (field) {
+                        field.setValue('');
+                        this._clearSearch();
+                    }, scope: this
+                },
             }
-        };
+        }];
     },
 
+    onClick: function (e) {
+        var elem = e.getTarget();
+        if (elem.nodeName == 'BUTTON') {
+            var row = this.getSelectionModel().getSelected();
+            if (typeof(row) != 'undefined') {
+                var action = elem.getAttribute('action');
+                if (action == 'showMenu') {
+                    var ri = this.getStore().find('id', row.id);
+                    return this._showMenu(this, ri, e);
+                }
+                else if (typeof this[action] === 'function') {
+                    this.menu.record = row.data;
+                    return this[action](this, e);
+                }
+            }
+        }
+        return this.processEvent('click', e);
+    },
+
+    _getSelectedIds: function () {
+        var ids = [];
+        var selected = this.getSelectionModel().getSelections();
+
+        for (var i in selected) {
+            if (!selected.hasOwnProperty(i)) {
+                continue;
+            }
+            ids.push(selected[i]['id']);
+        }
+
+        return ids;
+    },
+
+    _doSearch: function (tf) {
+        this.getStore().baseParams.query = tf.getValue();
+        this.getBottomToolbar().changePage(1);
+    },
+
+    _clearSearch: function () {
+        this.getStore().baseParams.query = '';
+        this.getBottomToolbar().changePage(1);
+    },
 });
-Ext.reg('inventario-grid-items', Inventario.grid.Items);
+Ext.reg('inventario-grid-groups', Inventario.grid.Groups);
